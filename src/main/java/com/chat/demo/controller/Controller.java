@@ -9,7 +9,7 @@ public class Controller {
 
     @GetMapping("/")
     public String home() {
-        return "Applicazione Spring Boot avviata con successoaaa!";
+        return "Applicazi!";
     }
 
 }
