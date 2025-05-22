@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+# Local configuration file

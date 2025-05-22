@@ -36,4 +36,12 @@ public class UserService {
     public User saveUser(User user) {
         return userRepository.save(user);
     }
+
+    public boolean checkUserCredentials(String username, String password) {
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isPresent()) {
+            return user.get().getPassword().equals(password);
+        }
+        return false;
+    }
 }
