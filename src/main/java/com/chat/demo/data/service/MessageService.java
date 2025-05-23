@@ -4,6 +4,8 @@ import com.chat.demo.data.entity.Message;
 import com.chat.demo.data.repo.MessageRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +16,13 @@ public class MessageService {
     private final MessageRepo messageRepository;
 
     public Message saveMessage(Message message) {
-        return messageRepository.save(message);
+        Message m = new Message(message);
+        m.setTimestamp(LocalDateTime.now());
+        return messageRepository.save(m);
+    }
+
+    public List<Message> getMessagesByRoom(String roomId) {
+        return messageRepository.findByRoomIdOrderByTimestampAsc(roomId);
     }
 
     public List<Message> getAllMessages() {
@@ -32,4 +40,5 @@ public class MessageService {
     public void deleteMessageById(String id) {
         messageRepository.deleteById(id);
     }
+
 }

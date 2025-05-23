@@ -16,5 +16,14 @@ public class Message {
     private String chatRoomId;
     private String senderId;
     private String content;
-    private LocalDateTime timestamp;
+    private LocalDateTime timestamp = LocalDateTime.now();
+    private MessageType type; 
+
+    public Message(Message message) {
+        this.id = message.id;
+        this.chatRoomId = message.chatRoomId;
+        this.content = message.content;
+        this.timestamp = message.timestamp;
+        this.type = message.type;
+    }
 }

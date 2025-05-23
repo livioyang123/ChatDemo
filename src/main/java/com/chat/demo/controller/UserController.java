@@ -5,7 +5,9 @@ import com.chat.demo.data.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/users")
@@ -15,7 +17,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
-        return ResponseEntity.ok(userService.createUser(user));
+        return ResponseEntity.ok(userService.saveUser(user));
     }
 
     @GetMapping
@@ -42,4 +44,5 @@ public class UserController {
         userService.deleteUserById(id);
         return ResponseEntity.noContent().build();
     }
+    
 }

@@ -3,19 +3,19 @@ package com.chat.demo.data.service;
 import com.chat.demo.data.entity.User;
 import com.chat.demo.data.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.security.core.userdetails.User.UserBuilder;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements org.springframework.security.core.userdetails.UserDetailsService {
 
     private final UserRepo userRepository;
-
-    public User createUser(User user) {
-        return userRepository.save(user);
-    }
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -37,11 +37,13 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public boolean checkUserCredentials(String username, String password) {
-        Optional<User> user = userRepository.findByUsername(username);
-        if (user.isPresent()) {
-            return user.get().getPassword().equals(password);
-        }
-        return false;
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Utente non trovato: " + username));
+        UserBuilder builder = org.springframework.security.core.userdetails.User.withUsername(user.getUsername())
+                .password(user.getPassword())  // deve essere criptata
+                .authorities(user.getRole());   // es. "ROLE_USER"
+        return builder.build();
     }
 }
