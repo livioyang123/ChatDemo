@@ -42,4 +42,6 @@ public class ChatroomController {
         chatroomService.deleteRoomById(id);
         return ResponseEntity.noContent().build();
     }
+
+    
 }

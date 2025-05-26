@@ -22,7 +22,7 @@ public class MessageService {
     }
 
     public List<Message> getMessagesByRoom(String roomId) {
-        return messageRepository.findByRoomIdOrderByTimestampAsc(roomId);
+        return messageRepository.findByChatRoomIdOrderByTimestampAsc(roomId);
     }
 
     public List<Message> getAllMessages() {

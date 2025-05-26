@@ -3,7 +3,10 @@ package com.chat.demo.controller;
 import com.chat.demo.data.entity.User;
 import com.chat.demo.data.service.UserService;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,11 +16,20 @@ import java.util.List;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
+    
     private final UserService userService;
+    @Autowired
+    private final PasswordEncoder passwordEncoder;
 
-    @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    @PostMapping("/register")
+    public ResponseEntity<User> register(@RequestBody User user) {
+        String encryptedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encryptedPassword);
+        user.setRole("ROLE_USER");
         return ResponseEntity.ok(userService.saveUser(user));
+    }@PostMapping("/register/test")
+    public String register_test(@RequestBody User user) {
+        return "User"+user.getUsername()+" registered successfully with encrypted password: " + user.getPassword();
     }
 
     @GetMapping
