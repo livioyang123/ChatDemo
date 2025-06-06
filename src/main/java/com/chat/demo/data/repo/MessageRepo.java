@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface MessageRepo extends MongoRepository<Message, String> {
     List<Message> findByChatRoomId(String chatRoomId); // Corretto il nome del metodo (camelCase)
+    
     List<Message> findByChatRoomIdOrderByTimestampAsc(String roomId);
 }

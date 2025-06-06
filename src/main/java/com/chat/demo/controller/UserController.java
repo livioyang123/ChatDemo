@@ -1,8 +1,10 @@
 package com.chat.demo.controller;
 
+import com.chat.demo.data.dto.ErrorResponse;
 import com.chat.demo.data.entity.User;
 import com.chat.demo.data.service.UserService;
 import lombok.RequiredArgsConstructor;
+import com.chat.demo.data.dto.ErrorResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/users")
@@ -22,16 +23,17 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user) {
+    public ResponseEntity<?> register(@RequestBody User user) {
+        if(userService.userExistsByUsername(user.getUsername())) {
+            return ResponseEntity.badRequest()
+                    .body(new ErrorResponse("Username already exists"));
+        }
         String encryptedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encryptedPassword);
         user.setRole("ROLE_USER");
         return ResponseEntity.ok(userService.saveUser(user));
-    }@PostMapping("/register/test")
-    public String register_test(@RequestBody User user) {
-        return "User"+user.getUsername()+" registered successfully with encrypted password: " + user.getPassword();
     }
-
+    
     @GetMapping
     public List<User> getAllUsers() {
         return userService.getAllUsers();
@@ -46,9 +48,12 @@ public class UserController {
 
     @GetMapping("/username/{username}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
-        return userService.getUserByUsername(username)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        User user = userService.getUserByUsername(username);
+        if (userService.userExistsByUsername(username)) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -56,5 +61,6 @@ public class UserController {
         userService.deleteUserById(id);
         return ResponseEntity.noContent().build();
     }
+    
     
 }

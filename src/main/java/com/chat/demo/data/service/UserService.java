@@ -1,5 +1,4 @@
 package com.chat.demo.data.service;
-
 import com.chat.demo.data.entity.User;
 import com.chat.demo.data.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(id);
     }
 
-    public Optional<User> getUserByUsername(String username) {
+    public User getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
@@ -38,10 +37,16 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    public boolean userExistsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Utente non trovato: " + username));
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("Utente non trovato: " + username);
+        }
         UserBuilder builder = org.springframework.security.core.userdetails.User.withUsername(user.getUsername())
                 .password(user.getPassword())  // deve essere criptata
                 .authorities(user.getRole());   // es. "ROLE_USER"

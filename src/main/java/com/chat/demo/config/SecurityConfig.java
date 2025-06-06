@@ -56,11 +56,21 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true);
         
+        // IMPORTANTE: Non usare "*" con credentials=true
+        // Specifica l'origine esatta del tuo frontend NextJS
+        configuration.setAllowedOrigins(Arrays.asList(
+            "http://localhost:3000",  // NextJS in sviluppo
+            "http://127.0.0.1:3000" ,  // Alternativa localhost
+            "http://localhost:*",
+            "https://localhost:*"
+            ));
+        
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true); // Necessario per i cookie
+        configuration.setExposedHeaders(Arrays.asList("Set-Cookie")); // Espone header Set-Cookie
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

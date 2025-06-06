@@ -32,4 +32,20 @@ public class ChatroomService {
     public void deleteRoomById(String id) {
         chatroomRepository.deleteById(id);
     }
+
+    public List<Chatroom> getRoomsByParticipantId(String userId) {
+        return chatroomRepository.findByParticipantIdsContaining(userId);
+    }
+
+    public Optional<Chatroom> addParticipantToRoom(String roomId, String userId) {
+        Optional<Chatroom> chatroomOpt = chatroomRepository.findById(roomId);
+        if (chatroomOpt.isPresent()) {
+            Chatroom chatroom = chatroomOpt.get();
+            if (!chatroom.getParticipantIds().contains(userId)) {
+                chatroom.getParticipantIds().add(userId);
+                return Optional.of(chatroomRepository.save(chatroom));
+            }
+        }
+        return Optional.empty();
+    }
 }

@@ -43,5 +43,17 @@ public class ChatroomController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/participant/{userId}")
+    public List<Chatroom> getChatRoomsByParticipantId(@PathVariable String userId) {
+        return chatroomService.getRoomsByParticipantId(userId);
+    }
+
+    @PutMapping("/{id}/add-participant/{userId}")
+    public ResponseEntity<Chatroom> addParticipantToChatRoom(@PathVariable String id, @PathVariable String userId) {
+        return chatroomService.addParticipantToRoom(id, userId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     
 }
